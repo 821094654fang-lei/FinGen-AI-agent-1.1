@@ -23,7 +23,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
 import { cn } from './lib/utils';
-import { MaterialType, CanvasSize, MATERIAL_TEMPLATES, LayoutType, ChatSession, GenerationRecord } from './types';
+import { MaterialType, CanvasSize, MATERIAL_TEMPLATES, LayoutType, ChatSession, GenerationRecord, IndustryTheme } from './types';
 import { useDropzone } from 'react-dropzone';
 
 // Components
@@ -188,7 +188,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#F5F5F0] text-[#141414] font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-grok-bg text-grok-text font-sans overflow-hidden">
       {/* Left Sidebar */}
       <SidebarLeft 
         activeType={materialType} 
@@ -214,11 +214,11 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col relative overflow-hidden">
-        <header className="h-14 border-b border-[#141414]/10 flex items-center justify-between px-6 bg-white/50 backdrop-blur-md z-10">
+      <main className="flex-1 flex flex-col relative overflow-hidden bg-grok-bg">
+        <header className="h-14 border-b border-grok-border flex items-center justify-between px-6 bg-grok-bg/80 backdrop-blur-md z-10">
           <div className="flex items-center gap-2">
-            <span className="font-serif italic text-lg font-bold">FinGen AI</span>
-            <span className="text-[10px] uppercase tracking-widest opacity-50 px-2 py-0.5 border border-[#141414]/20 rounded-full">Pro Agent</span>
+            <span className="font-bold tracking-tighter text-xl">FinGen</span>
+            <span className="text-[10px] uppercase tracking-widest text-grok-muted px-2 py-0.5 border border-grok-border rounded-full">Pro</span>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -230,17 +230,17 @@ export default function App() {
                   link.click();
                 }
               }}
-              className="bg-[#141414] text-white px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-[#333] transition-colors"
+              className="grok-btn-primary flex items-center gap-2 text-sm"
             >
               <Download size={16} />
-              <span>导出物料</span>
+              <span>导出</span>
             </button>
           </div>
         </header>
 
         <div className="flex-1 flex overflow-hidden">
           {/* Canvas Area */}
-          <div className="flex-1 flex flex-col bg-[#E4E3E0] relative">
+          <div className="flex-1 flex flex-col bg-grok-bg relative">
             <CanvasArea 
               size={canvasSize} 
               generatedImage={generatedImage}
@@ -252,18 +252,20 @@ export default function App() {
             />
             
             {/* Bottom Prompt Area */}
-            <PromptInput 
-              prompt={prompt} 
-              setPrompt={setPrompt} 
-              onGenerate={handleGenerate}
-              isGenerating={isGenerating}
-              onFileProcess={(content) => setPrompt(prev => prev + "\n" + content)}
-              selectedRegion={selectedRegion}
-              referenceImages={referenceImages}
-              setReferenceImages={setReferenceImages}
-              onReversePrompt={handleReversePrompt}
-              isAnalyzing={isAnalyzing}
-            />
+            <div className="max-w-4xl w-full mx-auto pb-8 px-6">
+              <PromptInput 
+                prompt={prompt} 
+                setPrompt={setPrompt} 
+                onGenerate={handleGenerate}
+                isGenerating={isGenerating}
+                onFileProcess={(content) => setPrompt(prev => prev + "\n" + content)}
+                selectedRegion={selectedRegion}
+                referenceImages={referenceImages}
+                setReferenceImages={setReferenceImages}
+                onReversePrompt={handleReversePrompt}
+                isAnalyzing={isAnalyzing}
+              />
+            </div>
           </div>
         </div>
       </main>

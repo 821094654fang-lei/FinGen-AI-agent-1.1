@@ -106,43 +106,38 @@ const PromptInput: React.FC<PromptInputProps> = ({
   });
 
   return (
-    <div className="p-6 bg-white/50 backdrop-blur-md border-t border-[#141414]/10">
+    <div className="w-full">
       <div 
         {...getRootProps()} 
         className={cn(
-          "max-w-4xl mx-auto relative transition-all duration-300",
-          isDragActive ? "scale-[1.02]" : ""
+          "relative transition-all duration-300",
+          isDragActive ? "scale-[1.01]" : ""
         )}
       >
         <input {...getInputProps()} />
         
         {isDragActive && (
-          <div className="absolute inset-0 z-10 bg-[#141414]/5 border-2 border-dashed border-[#141414]/20 rounded-2xl flex items-center justify-center backdrop-blur-[2px]">
-            <div className="flex items-center gap-3 text-[#141414] font-medium">
+          <div className="absolute inset-0 z-10 bg-white/5 border-2 border-dashed border-white/20 rounded-2xl flex items-center justify-center backdrop-blur-[2px]">
+            <div className="flex items-center gap-3 text-white font-medium">
               <FileIcon className="animate-bounce" />
-              <span>松开以上传文档或参考图</span>
+              <span>松开以上传</span>
             </div>
           </div>
         )}
 
-        <div className="relative group">
+        <div className="relative group grok-card p-2">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="描述你想生成的金融营销内容... (例如: 推广一款年化收益4.5%的稳健型理财产品，风格高端大气)"
-            className="w-full bg-white border border-[#141414]/10 rounded-2xl p-4 pr-32 min-h-[120px] focus:ring-2 focus:ring-[#141414]/5 focus:border-[#141414]/20 transition-all resize-none text-sm leading-relaxed"
+            placeholder="描述你想生成的金融营销内容..."
+            className="w-full bg-transparent border-none p-4 pr-32 min-h-[100px] focus:ring-0 transition-all resize-none text-sm leading-relaxed text-white placeholder:text-grok-muted"
           />
           
           <div className="absolute bottom-4 right-4 flex items-center gap-2">
             <button
               onClick={onGenerate}
               disabled={isGenerating || !prompt || isProcessingFile}
-              className={cn(
-                "flex items-center gap-2 px-6 py-2 rounded-xl font-medium transition-all",
-                isGenerating || !prompt || isProcessingFile
-                  ? "bg-[#141414]/10 text-[#141414]/30 cursor-not-allowed"
-                  : "bg-[#141414] text-white hover:bg-[#333] shadow-lg shadow-[#141414]/10"
-              )}
+              className="grok-btn-primary flex items-center gap-2"
             >
               {isGenerating || isProcessingFile ? (
                 <Loader2 size={18} className="animate-spin" />
@@ -157,44 +152,40 @@ const PromptInput: React.FC<PromptInputProps> = ({
         </div>
 
         {/* Assets & Upload Area */}
-        <div className="mt-4 flex flex-wrap items-center gap-4">
+        <div className="mt-3 flex flex-wrap items-center gap-3">
           {/* Upload Button */}
           <button 
             onClick={open}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F5F5F0] hover:bg-[#E4E3E0] rounded-xl text-xs font-medium text-[#141414]/60 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-full text-[11px] font-medium text-grok-muted transition-colors border border-grok-border"
           >
-            <Upload size={14} />
-            <span>上传 PDF/Excel/参考图</span>
+            <Upload size={12} />
+            <span>上传文件/参考图</span>
           </button>
 
           {/* Reference Images Gallery */}
-          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar">
             {referenceImages.map((img, i) => (
-              <div key={i} className="relative group/img flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-[#141414]/10 shadow-sm">
+              <div key={i} className="relative group/img flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden border border-grok-border shadow-sm">
                 <img src={img} alt="Ref" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1">
                   <button 
                     onClick={() => onReversePrompt(img)}
                     disabled={isAnalyzing}
-                    className="p-1 bg-white rounded-full text-[#141414] hover:scale-110 transition-transform"
+                    className="p-1 bg-white rounded-full text-black hover:scale-110 transition-transform"
                   >
-                    {isAnalyzing ? <Loader2 size={10} className="animate-spin" /> : <Search size={10} />}
+                    {isAnalyzing ? <Loader2 size={8} className="animate-spin" /> : <Search size={8} />}
                   </button>
                   <button 
                     onClick={() => setReferenceImages(prev => prev.filter((_, idx) => idx !== i))}
                     className="p-1 bg-white rounded-full text-red-500 hover:scale-110 transition-transform"
                   >
-                    <X size={10} />
+                    <X size={8} />
                   </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        
-        <p className="mt-4 text-[10px] text-[#141414]/40 text-center uppercase tracking-[0.2em]">
-          Powered by Gemini 3.1 Flash Image & Gemini 3 Flash
-        </p>
       </div>
     </div>
   );

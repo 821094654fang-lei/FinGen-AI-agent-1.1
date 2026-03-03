@@ -4,6 +4,8 @@ import { CanvasSize } from '../types';
 import { Loader2, Maximize2, MousePointer2, Sparkles, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+import ImagePreviewModal from './ImagePreviewModal';
+
 interface CanvasAreaProps {
   size: CanvasSize;
   generatedImage: string | null;
@@ -31,6 +33,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   const [logoImg, setLogoImg] = useState<HTMLImageElement | null>(null);
   const [qrImg, setQrImg] = useState<HTMLImageElement | null>(null);
 
+  const [showPreview, setShowPreview] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
@@ -38,13 +41,15 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     const updateSize = () => {
       if (containerRef.current) {
         const { clientWidth, clientHeight } = containerRef.current;
-        const padding = 40; // Reduced padding for better fit
+        const padding = 40;
         const availableWidth = clientWidth - padding * 2;
         const availableHeight = clientHeight - padding * 2;
         
         const scaleX = availableWidth / size.width;
         const scaleY = availableHeight / size.height;
-        const newScale = Math.min(scaleX, scaleY); // Allow scaling up if needed, but usually limited by available space
+        
+        const fitScale = Math.min(scaleX, scaleY);
+        const newScale = fitScale;
         
         setStageSize({
           width: size.width * newScale,
@@ -60,6 +65,19 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
     updateSize();
     return () => observer.disconnect();
   }, [size]);
+
+  // Keyboard shortcut for Tab
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && selectedRegion) {
+        e.preventDefault();
+        const promptArea = document.querySelector('textarea');
+        if (promptArea) promptArea.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedRegion]);
 
   useEffect(() => {
     if (generatedImage) {
@@ -92,7 +110,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   }, [qrCode]);
 
   const handleMouseDown = (e: any) => {
-    if (!generatedImage) return;
+    if (!generatedImage || isGenerating) return;
     const stage = e.target.getStage();
     const pos = stage.getPointerPosition();
     const x = (pos.x) / scale;
@@ -126,7 +144,10 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="flex-1 flex items-center justify-center p-10 relative overflow-hidden">
+    <div 
+      ref={containerRef} 
+      className="flex-1 flex items-center justify-center p-10 relative overflow-hidden"
+    >
       <div 
         className="bg-white shadow-2xl relative group"
         style={{ width: stageSize.width, height: stageSize.height }}
@@ -173,17 +194,16 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
               />
             )}
 
-            {/* Selection Rectangle */}
+            {/* Selection Rectangle - Screenshot Style */}
             {selectedRegion && (
               <Rect
                 x={selectedRegion.x}
                 y={selectedRegion.y}
                 width={selectedRegion.width}
                 height={selectedRegion.height}
-                stroke="#141414"
+                stroke="#3B82F6"
                 strokeWidth={2 / scale}
-                dash={[5 / scale, 5 / scale]}
-                fill="rgba(255, 255, 255, 0.2)"
+                fill="rgba(59, 130, 246, 0.1)"
               />
             )}
 
@@ -213,35 +233,66 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
           </Layer>
         </Stage>
 
-        {/* Selected Region Actions */}
+        {/* Selected Region Actions - Screenshot Style */}
         {selectedRegion && !isDrawing && (
-          <div 
-            className="absolute z-30 flex items-center gap-2"
-            style={{ 
-              left: selectedRegion.x * scale, 
-              top: (selectedRegion.y + selectedRegion.height) * scale + 10 
-            }}
-          >
-            <div className="bg-[#141414] text-white px-3 py-1.5 rounded-full text-[10px] font-medium flex items-center gap-2 shadow-xl">
-              <Sparkles size={12} />
-              <span>局部调整模式</span>
-              <button 
-                onClick={() => setSelectedRegion(null)}
-                className="ml-2 p-0.5 hover:bg-white/20 rounded-full"
-              >
-                <X size={10} />
-              </button>
+          <>
+            {/* Number Badge */}
+            <div 
+              className="absolute z-40 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg border-2 border-white"
+              style={{ 
+                left: selectedRegion.x * scale - 12, 
+                top: selectedRegion.y * scale - 12 
+              }}
+            >
+              1
             </div>
-          </div>
+
+            {/* Quick Edit Label */}
+            <div 
+              className="absolute z-40 flex items-center gap-2"
+              style={{ 
+                left: (selectedRegion.x + selectedRegion.width) * scale + 8, 
+                top: (selectedRegion.y + selectedRegion.height) * scale - 24 
+              }}
+            >
+              <div className="bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-xl flex items-center gap-2 whitespace-nowrap">
+                <span className="text-xs font-medium text-gray-700">快捷编辑</span>
+                <span className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] text-gray-500 font-mono">Tab</span>
+                <button 
+                  onClick={() => setSelectedRegion(null)}
+                  className="ml-1 p-1 hover:bg-gray-100 rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
       {/* Floating Controls */}
-      <div className="absolute bottom-6 right-6 flex gap-2">
-        <button className="p-2 bg-white rounded-full shadow-lg hover:bg-[#F5F5F0] transition-colors">
-          <Maximize2 size={18} />
+      <div className="absolute bottom-6 right-6 flex flex-col gap-2 z-50">
+        <button 
+          onClick={() => setShowPreview(true)}
+          disabled={!generatedImage}
+          className={cn(
+            "p-3 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center bg-white text-[#141414] hover:bg-[#F5F5F0] disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+          title="放大预览"
+        >
+          <Maximize2 size={20} />
         </button>
       </div>
+
+      {/* Preview Modal */}
+      {generatedImage && (
+        <ImagePreviewModal 
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          imageUrl={generatedImage}
+          title={`${size.label} · ${size.width}x${size.height}`}
+        />
+      )}
     </div>
   );
 };

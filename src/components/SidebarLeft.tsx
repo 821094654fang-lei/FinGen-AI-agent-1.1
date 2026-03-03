@@ -133,22 +133,22 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
       className="w-full flex items-center justify-between py-2 group"
     >
       <div className="flex items-center gap-2">
-        <Icon size={14} className="opacity-40" />
-        <h2 className="text-[11px] font-serif italic uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">{title}</h2>
+        <Icon size={14} className="text-grok-muted" />
+        <h2 className="text-[10px] font-bold uppercase tracking-widest text-grok-muted group-hover:text-white transition-colors">{title}</h2>
       </div>
-      {expandedSections.includes(id) ? <ChevronDown size={14} className="opacity-40" /> : <ChevronRight size={14} className="opacity-40" />}
+      {expandedSections.includes(id) ? <ChevronDown size={14} className="text-grok-muted" /> : <ChevronRight size={14} className="text-grok-muted" />}
     </button>
   );
 
   return (
-    <aside className="w-72 border-r border-[#141414]/10 flex flex-col bg-white overflow-hidden">
-      <div className="p-4 border-b border-[#141414]/5">
+    <aside className="w-72 border-r border-grok-border flex flex-col bg-grok-bg overflow-hidden">
+      <div className="p-4 border-b border-grok-border">
         <button 
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 bg-[#141414] text-white p-3 rounded-2xl hover:bg-[#333] transition-all shadow-lg shadow-[#141414]/10"
+          className="w-full grok-btn-primary flex items-center justify-center gap-2"
         >
           <Plus size={18} />
-          <span className="font-medium text-sm">开启新对话</span>
+          <span className="font-medium text-sm">新对话</span>
         </button>
       </div>
 
@@ -165,14 +165,14 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
                   className={cn(
                     "w-full flex flex-col items-start p-3 rounded-xl transition-all duration-200 text-left",
                     activeType === item.id 
-                      ? "bg-[#F5F5F0] text-[#141414]" 
-                      : "hover:bg-[#F5F5F0]/50 text-[#141414]/70"
+                      ? "bg-white/5 text-white" 
+                      : "hover:bg-white/5 text-grok-muted"
                   )}
                 >
                   <div className="flex items-center gap-3 mb-1">
                     <div className={cn(
                       "p-2 rounded-lg",
-                      activeType === item.id ? "bg-[#141414] text-white" : "bg-[#E4E3E0]"
+                      activeType === item.id ? "bg-white text-black" : "bg-grok-border"
                     )}>
                       {item.icon}
                     </div>
@@ -196,10 +196,10 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
                 <button 
                   key={theme.id}
                   onClick={() => onOpenTemplate(theme)}
-                  className="w-full flex items-center justify-between p-2 text-xs font-medium text-[#141414]/60 hover:text-[#141414] hover:bg-[#F5F5F0] rounded-lg transition-colors group"
+                  className="w-full flex items-center justify-between p-2 text-xs font-medium text-grok-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#E4E3E0] flex items-center justify-center group-hover:bg-[#141414] group-hover:text-white transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-grok-border flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
                       {theme.icon}
                     </div>
                     {theme.label}
@@ -217,21 +217,21 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
           {expandedSections.includes('dimensions') && (
             <div className="grid grid-cols-2 gap-2 mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase opacity-50">宽度 (px)</label>
+                <label className="text-[10px] uppercase text-grok-muted">宽度 (px)</label>
                 <input 
                   type="number" 
                   value={canvasSize.width}
                   onChange={(e) => setCanvasSize({ ...canvasSize, width: parseInt(e.target.value) || 0 })}
-                  className="w-full bg-[#F5F5F0] border-none rounded-lg p-2 text-sm focus:ring-1 focus:ring-[#141414]"
+                  className="w-full grok-input p-2 text-sm"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] uppercase opacity-50">高度 (px)</label>
+                <label className="text-[10px] uppercase text-grok-muted">高度 (px)</label>
                 <input 
                   type="number" 
                   value={canvasSize.height}
                   onChange={(e) => setCanvasSize({ ...canvasSize, height: parseInt(e.target.value) || 0 })}
-                  className="w-full bg-[#F5F5F0] border-none rounded-lg p-2 text-sm focus:ring-1 focus:ring-[#141414]"
+                  className="w-full grok-input p-2 text-sm"
                 />
               </div>
             </div>
@@ -246,17 +246,17 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
               {/* Logo Upload */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium">Logo 替换</span>
-                  {logo && <button onClick={() => setLogo(null)} className="text-[#141414]/40 hover:text-red-500"><Trash2 size={14} /></button>}
+                  <span className="text-xs font-medium">Logo</span>
+                  {logo && <button onClick={() => setLogo(null)} className="text-red-500 hover:text-red-400"><Trash2 size={14} /></button>}
                 </div>
-                <div {...getLogoProps()} className="border-2 border-dashed border-[#141414]/5 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-[#F5F5F0] transition-colors">
+                <div {...getLogoProps()} className="border border-dashed border-grok-border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors">
                   <input {...getLogoInput()} />
                   {logo ? (
                     <img src={logo} alt="Logo" className="h-12 object-contain" />
                   ) : (
                     <>
-                      <Upload size={20} className="opacity-20 mb-2" />
-                      <span className="text-[10px] opacity-40">点击或拖拽上传 Logo</span>
+                      <Upload size={20} className="text-grok-muted mb-2" />
+                      <span className="text-[10px] text-grok-muted">上传 Logo</span>
                     </>
                   )}
                 </div>
@@ -265,17 +265,17 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
               {/* QR Code Upload */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium">二维码配置</span>
-                  {qrCode && <button onClick={() => setQrCode(null)} className="text-[#141414]/40 hover:text-red-500"><Trash2 size={14} /></button>}
+                  <span className="text-xs font-medium">二维码</span>
+                  {qrCode && <button onClick={() => setQrCode(null)} className="text-red-500 hover:text-red-400"><Trash2 size={14} /></button>}
                 </div>
-                <div {...getQRProps()} className="border-2 border-dashed border-[#141414]/5 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-[#F5F5F0] transition-colors">
+                <div {...getQRProps()} className="border border-dashed border-grok-border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-colors">
                   <input {...getQRInput()} />
                   {qrCode ? (
                     <img src={qrCode} alt="QR" className="h-12 w-12 object-contain" />
                   ) : (
                     <>
-                      <QrIcon size={20} className="opacity-20 mb-2" />
-                      <span className="text-[10px] opacity-40">上传渠道二维码</span>
+                      <QrIcon size={20} className="text-grok-muted mb-2" />
+                      <span className="text-[10px] text-grok-muted">上传二维码</span>
                     </>
                   )}
                 </div>
@@ -285,13 +285,13 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({
         </section>
       </div>
 
-      <div className="p-4 border-t border-[#141414]/5">
+      <div className="p-4 border-t border-grok-border">
         <button 
           onClick={onToggleHistory}
-          className="w-full flex items-center gap-3 p-3 rounded-xl text-[#141414]/60 hover:text-[#141414] hover:bg-[#F5F5F0] transition-all"
+          className="w-full flex items-center gap-3 p-3 rounded-xl text-grok-muted hover:text-white hover:bg-white/5 transition-all"
         >
           <History size={20} />
-          <span className="font-medium text-sm">历史生成记录</span>
+          <span className="font-medium text-sm">历史记录</span>
         </button>
       </div>
     </aside>
