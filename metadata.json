@@ -1,0 +1,8 @@
+{
+  "name": "FinGen AI - 金融智能生图 Agent",
+  "description": "专业的金融行业营销物料智能生成平台，支持海报、Banner、长图生成，集成文档解析、Logo/二维码替换及提示词反推功能。",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
